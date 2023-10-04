@@ -27,8 +27,9 @@ users_collection_name = os.environ.get('USERS_COLLECTION')
 reminders_collection_name = os.environ.get('REMINDERS_COLLECTION')
 
 db = client[db_name]
-users_collection = db[users_collection_name]
-reminders_collection = db[reminders_collection_name]
+users_collection = db.get_collection(users_collection_name)
+reminders_collection = db.get_collection(reminders_collection_name)
+
 
 temp_reminder_data = {}
 message_to_remind = ''
