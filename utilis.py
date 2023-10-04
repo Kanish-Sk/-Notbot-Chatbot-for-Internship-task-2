@@ -44,18 +44,15 @@ def send_due_reminders():
 
         due_reminders = reminders_collection.find(
             {"reminder_datetime": {"$lte": current_time_utc}})
-        reminders_collection.delete_many(
-            {"reminder_datetime": {"$lte": current_time_utc}})
+
+        print(due_reminders)
 
         for reminder in due_reminders:
-            print(reminder)
             user_phone_number = reminder["user_phone_number"]
             user_timezone = timezone(reminder["timezone"])
             reminder_datetime = reminder["reminder_datetime"].replace(
                 tzinfo=pytz.UTC)
             current_time_user_tz = current_time_utc.astimezone(user_timezone)
-
-            print(reminder_datetime, current_time_user_tz)
 
             if reminder_datetime <= current_time_user_tz:
                 reminder_message = reminder["reminder_message"]
@@ -70,6 +67,9 @@ def send_due_reminders():
                     )
                     print(
                         f"Sent reminder to {user_phone_number}: {reminder_message}")
+
+                    reminders_collection.delete_one(
+                        {"_id": reminder["_id"]})
 
                 except Exception as e:
                     print("Error sending reminder:", str(e))
